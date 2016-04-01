@@ -33,6 +33,9 @@ module.exports = React.createClass({
       _this.change(dom.innerHTML);
     });
   },
+  componentDidUpdate: function componentDidUpdate() {
+    this.medium.restoreSelection();
+  },
   componentWillUnmount: function componentWillUnmount() {
     this.medium.destroy();
   },
@@ -51,6 +54,10 @@ module.exports = React.createClass({
       contentEditable: true,
       dangerouslySetInnerHTML: { __html: this.state.text }
     });
+
+    if (this.medium) {
+      this.medium.saveSelection();
+    }
 
     return React.createElement(tag, props);
   },
