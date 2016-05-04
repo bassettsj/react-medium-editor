@@ -1,67 +1,139 @@
 'use strict';
 
-var assign = require('object-assign');
-var blacklist = require('blacklist');
-var React = require('react');
-var ReactDOM = require('react-dom');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-if (typeof document !== 'undefined') {
-  var MediumEditor = require('medium-editor');
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+require('babel-polyfill');
+
+var _blacklist = require('blacklist');
+
+var _blacklist2 = _interopRequireDefault(_blacklist);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var isDOM = typeof document !== 'undefined';
+
+
+var MediumEditor = void 0;
+if (isDOM) {
+  MediumEditor = require('medium-editor');
+} else {
+  MediumEditor = function MediumEditor() {
+    _classCallCheck(this, MediumEditor);
+  };
 }
 
-module.exports = React.createClass({
-  displayName: 'MediumEditor',
-
-  getInitialState: function getInitialState() {
-    return {
-      text: this.props.text
-    };
-  },
-  getDefaultProps: function getDefaultProps() {
-    return {
-      tag: 'div'
-    };
-  },
-  componentDidMount: function componentDidMount() {
-    var _this = this;
-
-    var dom = ReactDOM.findDOMNode(this);
-
-    this.medium = new MediumEditor(dom, this.props.options);
-    this.medium.subscribe('editableInput', function (e) {
-      _this._updated = true;
-      _this.change(dom.innerHTML);
-    });
-  },
-  componentDidUpdate: function componentDidUpdate() {
-    this.medium.restoreSelection();
-  },
-  componentWillUnmount: function componentWillUnmount() {
-    this.medium.destroy();
-  },
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    if (nextProps.text !== this.state.text && !this._updated) {
-      this.setState({ text: nextProps.text });
-    }
-
-    if (this._updated) this._updated = false;
-  },
-  render: function render() {
-    var tag = this.props.tag;
-    var props = blacklist(this.props, 'tag', 'contentEditable', 'dangerouslySetInnerHTML');
-
-    assign(props, {
-      contentEditable: true,
-      dangerouslySetInnerHTML: { __html: this.state.text }
-    });
-
-    if (this.medium) {
-      this.medium.saveSelection();
-    }
-
-    return React.createElement(tag, props);
-  },
-  change: function change(text) {
-    if (this.props.onChange) this.props.onChange(text, this.medium);
+var getText = function getText(props) {
+  var result = '';
+  if (props.hasOwnProperty('text') && typeof props.text === 'string') {
+    result = props.text;
   }
-});
+  return result;
+};
+
+var ReactMediumEditor = function (_Component) {
+  _inherits(ReactMediumEditor, _Component);
+
+  function ReactMediumEditor() {
+    var _Object$getPrototypeO;
+
+    _classCallCheck(this, ReactMediumEditor);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var _this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(ReactMediumEditor)).call.apply(_Object$getPrototypeO, [this].concat(args)));
+
+    _this.state = {
+      text: getText(_this.props)
+    };
+    return _this;
+  }
+
+  _createClass(ReactMediumEditor, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      if (!isDOM) return;
+      var dom = _reactDom2.default.findDOMNode(this);
+
+      this.medium = new MediumEditor(dom, Object.assign({}, this.props.options));
+      this.medium.subscribe('editableInput', function (e) {
+        _this2._updated = true;
+        _this2.change(dom.innerHTML);
+      });
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      this.medium.restoreSelection();
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this.medium.destroy();
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.text !== this.state.text && !this._updated) {
+        this.setState({ text: nextProps.text });
+      }
+
+      if (this._updated) this._updated = false;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var tag = this.props.tag;
+      var props = (0, _blacklist2.default)(this.props, 'tag', 'contentEditable', 'dangerouslySetInnerHTML');
+
+      Object.assign(props, {
+        contentEditable: true,
+        dangerouslySetInnerHTML: { __html: this.state.text }
+      });
+
+      if (this.medium) {
+        this.medium.saveSelection();
+      }
+
+      return _react2.default.createElement(_react2.default.DOM[tag], props);
+    }
+  }, {
+    key: 'change',
+    value: function change(text) {
+      if (this.props.onChange) this.props.onChange(typeof text === 'string' ? text : '', this.medium);
+    }
+  }]);
+
+  return ReactMediumEditor;
+}(_react.Component);
+
+ReactMediumEditor.defaultProps = {
+  tag: 'div'
+};
+ReactMediumEditor.propTypes = {
+  tag: _react.PropTypes.string,
+  onChange: _react.PropTypes.func,
+  options: _react.PropTypes.object
+};
+exports.default = ReactMediumEditor;

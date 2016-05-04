@@ -1,1 +1,1 @@
-module.exports = require('./dist/editor');
+module.exports = require('./dist/editor').default;
